@@ -108,17 +108,6 @@ for gpio, pid in GPIO2PID.items():
 
 #------------------------------------------------------------------------------
 
-def whoami(pid: str) -> str:
-    '''
-    Determine if I am BB1 or BB2.
-
-    Returns True if I am BB1, False if I am BB2.
-    '''
-    gpio = PID2GPIO[pid]
-    return True if gpioState[gpio][2] else False
-
-#------------------------------------------------------------------------------
-
 def filterGPIOState(filter: str) -> dict:
 
     state = {}
@@ -196,19 +185,6 @@ def getMaxPIDLength(state: dict) -> int:
 #------------------------------------------------------------------------------
 
 gpioState = getGPIOState()
-WHOAMI = whoami('P9_12')
-
-if WHOAMI:
-    ABx = 'AB1'
-    ABy = 'AB2'
-else:
-    ABx = 'AB2'
-    ABy = 'AB1'
-
-for gpio in gpioState:
-    label, direction, value, port, bit, gid = gpioState[gpio]
-    label = label.replace('ABx', ABx).replace('ABy', ABy)
-    gpioState[gpio] = (label, direction, value, port, bit, gid)
 
 MAX_LABEL_LENGTH = getMaxLabelLength(gpioState)
 MAX_PID_LENGTH = getMaxPIDLength(gpioState)
@@ -220,7 +196,7 @@ while True:
 
     status = os.system('clear')
 
-    print('\n' + ('BeagleBone 1' if WHOAMI else 'BeagleBone 2') + ' Output GPIO States\n')
+    print('\nOutput GPIO States\n')
 
     for gpio in sorted(gpioState):
         label, direction, value, port, bit, gid = gpioState[gpio]
